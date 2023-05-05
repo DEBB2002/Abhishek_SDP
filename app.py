@@ -44,7 +44,7 @@ def load_nlp(text):
     ruler.add_patterns(patterns)
     doc = nlp(text)
     return doc    
-model = pickle.load(open('nlp1.pkl','rb'))
+#model = pickle.load(open('nlp1.pkl','rb'))
 
 app = Flask(__name__)
 
