@@ -9,6 +9,11 @@ model = pickle.load(open('nlp1.pkl','rb'))
 
 app = Flask(__name__)
 
+import pathlib
+plt = platform.system()
+if plt == 'Linux': pathlib.WindowsPath = pathlib.PosixPath
+
+
 
 
    
