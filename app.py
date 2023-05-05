@@ -80,7 +80,7 @@ def get_users():
     
     
     text.replace(" ", "")
-    print("Using jsonify")
+    #print("Using jsonify")
     cv=request.files.getlist('file')
     file=cv[0]
     
@@ -88,7 +88,7 @@ def get_users():
     
 
     #r=request.form.get("text")
-    print(text)
+    #print(text)
     #m1=model(text)
     m1=load_nlp(text)
     #from spacy import displacy
@@ -123,7 +123,7 @@ def get_users():
     dict_data["EMAIL"]=(list(email))
     dict_data["Phone"]=(list(phone))            
        
-    print("Using jsonify")
+    print(dict_data)
     
             
     return jsonify({'data': dict_data})
