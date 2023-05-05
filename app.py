@@ -1,15 +1,52 @@
-from flask import Flask,request,jsonify
-
+from flask import Flask,request,jsonify, render_template
+import re
+import spacy
+import pickle
+import urllib.request
 import pickle
 
 
-
 import PyPDF2
+def load_nlp(text):
+    nlp=spacy.load('en_core_web_lg')
+    skills='abc.jsonl'
+    ruler=nlp.add_pipe('entity_ruler',before='ner')
+    ruler.from_disk(skills)
+    patterns=[
+    
+    {
+        'label':'EMAIL','pattern':[{"TEXT":{"REGEX":"([^@|\s]+@[^@]+\.[^@|\s]+)"}}]
+        
+    },
+    {
+        'label':'MOBILE','pattern':[{"TEXT":{"REGEX":"\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}"}}]
+        
+    },
+     {
+        'label':'Name','pattern':[{"TEXT":{"REGEX":"/^[a-zA-Z ]*$/"}}]
+        
+    }
+    
+    
+    ]
+    EDUCATION = [
+            'BE','B.E.', 'B.E', 'BS', 'B.S', 
+            'ME', 'M.E', 'M.E.', 'MS', 'M.S', 
+            'BTECH', 'B.TECH', 'M.TECH', 'MTECH', 
+            'SSC', 'HSC', 'CBSE', 'ICSE', 'X', 'XII'
+        ]
+    for i in range(len(EDUCATION)):
+        patterns.append( {
+            'label':'Education','pattern':[{"TEXT":{"REGEX":EDUCATION[i]}}]
+        
+                    }
+                )
+    ruler.add_patterns(patterns)
+    doc = nlp(text)
+    return doc    
 model = pickle.load(open('nlp1.pkl','rb'))
 
 app = Flask(__name__)
-
-
 
 
 
@@ -52,7 +89,8 @@ def get_users():
 
     #r=request.form.get("text")
     print(text)
-    m1=model(text)
+    #m1=model(text)
+    m1=load_nlp(text)
     #from spacy import displacy
     #displacy.render(m1, style="ent", jupyter=True)
     dict_data={}
@@ -92,4 +130,6 @@ def get_users():
  
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",debug=True,port=5000)
+    app.run(debug=True,port=5000)
+
+
